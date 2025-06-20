@@ -153,75 +153,69 @@
             const rotationOffset = -Math.PI / 2; // Offset to start segment 0 at 12 o'clock
             const anglePerSegment = 2 * Math.PI / segments.length;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Save context before rotation
-            ctx.save();
-
-            // Move to center for rotation
+            
+            ctx.save(); // Save context for overall wheel rotation
             ctx.translate(centerX, centerY);
-            // Rotate the entire wheel based on currentRotation (in degrees)
-            ctx.rotate(currentRotation * Math.PI / 180); // CORRECTED: use currentRotation
-
+            ctx.rotate(currentRotation * Math.PI / 180); // Apply current wheel rotation
+            
             segments.forEach((segment, i) => {
-                const startAngle = i * anglePerSegment + rotationOffset; // Offset applied
-                const endAngle = (i + 1) * anglePerSegment + rotationOffset; // Offset applied
-
+                const startAngle = i * anglePerSegment + rotationOffset;
+                const endAngle = (i + 1) * anglePerSegment + rotationOffset;
+                
                 // Draw segment
                 ctx.beginPath();
-                ctx.moveTo(0, 0); // Center of the wheel
+                ctx.moveTo(0, 0);
                 ctx.arc(0, 0, radius, startAngle, endAngle);
                 ctx.closePath();
                 ctx.fillStyle = segment.color;
                 ctx.fill();
-                ctx.strokeStyle = '#1a1a2e'; // Border color for segments
+                ctx.strokeStyle = '#1a1a2e';
                 ctx.lineWidth = 5;
                 ctx.stroke();
-
-                // Draw text
-                ctx.save();
-                const textAngle = i * anglePerSegment + anglePerSegment / 2 + rotationOffset; // Offset applied
-                ctx.rotate(textAngle);
-                ctx.textAlign = 'right'; // Align text to the right, so it radiates outwards
+                
+                // Draw text for this segment
+                ctx.save(); // Save context for this specific text block
+                const textAngle = i * anglePerSegment + anglePerSegment / 2 + rotationOffset;
+                ctx.rotate(textAngle); // Rotate for radiating text
+                ctx.textAlign = 'right';
                 ctx.fillStyle = 'white';
-
-                // Special handling for "Ice Cold Fatty"
+                
                 if (segment.label === 'Ice Cold Fatty') {
-                    ctx.font = '600 14px Arial, sans-serif'; // Slightly smaller for three lines
-                    ctx.fillText('Ice', radius - 25, -5); // Adjusted y for stacking
+                    ctx.font = '600 14px Arial, sans-serif';
+                    ctx.fillText('Ice', radius - 25, -5);
                     ctx.fillText('Cold', radius - 25, 10);
                     ctx.fillText('Fatty', radius - 25, 25);
-                } else if (segment.label.includes(' ')) { // Handle other multi-word labels
+                } else if (segment.label.includes(' ')) {
                     const words = segment.label.split(' ');
-                    ctx.font = 'bold 16px Arial'; // Adjusted font for two lines
-                    ctx.fillText(words[0], radius - 25, 0); // Adjusted y for stacking
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(words[0], radius - 25, 0);
                     if (words[1]) {
                         ctx.fillText(words[1], radius - 25, 15);
                     }
-                } else { // Single word labels
+                } else {
                     ctx.font = 'bold 20px Arial';
                     ctx.fillText(segment.label, radius - 25, 10);
                 }
-                ctx.fillText(segment.emoji, radius - 65, 10); // Emoji, consistent y
-                ctx.restore();
+                ctx.fillText(segment.emoji, radius - 65, 10);
+                ctx.restore(); // Restore context after this text block
             });
-
-            // Draw center circle
+            
+            // Draw center circle (after segments and their text)
             ctx.beginPath();
-            ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+            ctx.arc(0, 0, 50, 0, 2 * Math.PI); // Center circle
             ctx.fillStyle = '#ff1493';
             ctx.fill();
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.stroke();
-
-            // Draw PHISH text
-            ctx.font = '700 18px Arial, sans-serif';
+            
+            ctx.font = '700 18px Arial, sans-serif'; // PHISH text
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('PHISH', 0, 0);
 
-            ctx.restore();
+            ctx.restore(); // Restore context after overall wheel rotation
         }
 
         function spinWheel() {
