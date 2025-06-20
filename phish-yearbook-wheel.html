@@ -124,7 +124,7 @@
 
         // Set device pixel ratio for sharp text
         const dpr = window.devicePixelRatio || 2;
-        const size = 400;
+        const size = 440;
 
         canvas.width = size * dpr;
         canvas.height = size * dpr;
@@ -135,7 +135,7 @@
 
         const centerX = size / 2;
         const centerY = size / 2;
-        const radius = 180;
+        const radius = 200;
 
         let currentRotation = 0;
         let isSpinning = false;
@@ -153,15 +153,15 @@
             const rotationOffset = -Math.PI / 2; // Offset to start segment 0 at 12 o'clock
             const anglePerSegment = 2 * Math.PI / segments.length;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             ctx.save(); // Save context for overall wheel rotation
             ctx.translate(centerX, centerY);
             ctx.rotate(currentRotation * Math.PI / 180); // Apply current wheel rotation
-            
+
             segments.forEach((segment, i) => {
                 const startAngle = i * anglePerSegment + rotationOffset;
                 const endAngle = (i + 1) * anglePerSegment + rotationOffset;
-                
+
                 // Draw segment
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
@@ -172,43 +172,43 @@
                 ctx.strokeStyle = '#1a1a2e';
                 ctx.lineWidth = 5;
                 ctx.stroke();
-                
+
                 // Draw text for this segment
                 ctx.save(); // Save context for this specific text block
                 const textAngle = i * anglePerSegment + anglePerSegment / 2 + rotationOffset;
                 ctx.rotate(textAngle); // Rotate for radiating text
                 ctx.textAlign = 'right';
                 ctx.fillStyle = 'white';
-                
+
                 if (segment.label === 'Ice Cold Fatty') {
                     ctx.font = '600 14px Arial, sans-serif';
-                    ctx.fillText('Ice', radius - 25, -5);
-                    ctx.fillText('Cold', radius - 25, 10);
-                    ctx.fillText('Fatty', radius - 25, 25);
+                    ctx.fillText('Ice', radius - 30, -5);
+                    ctx.fillText('Cold', radius - 30, 10);
+                    ctx.fillText('Fatty', radius - 30, 25);
                 } else if (segment.label.includes(' ')) {
                     const words = segment.label.split(' ');
                     ctx.font = 'bold 16px Arial';
-                    ctx.fillText(words[0], radius - 25, 0);
+                    ctx.fillText(words[0], radius - 30, 0);
                     if (words[1]) {
-                        ctx.fillText(words[1], radius - 25, 15);
+                        ctx.fillText(words[1], radius - 30, 15);
                     }
                 } else {
                     ctx.font = 'bold 20px Arial';
-                    ctx.fillText(segment.label, radius - 25, 10);
+                    ctx.fillText(segment.label, radius - 30, 10);
                 }
-                ctx.fillText(segment.emoji, radius - 65, 10);
+                ctx.fillText(segment.emoji, radius - 85, 10);
                 ctx.restore(); // Restore context after this text block
             });
-            
+
             // Draw center circle (after segments and their text)
             ctx.beginPath();
-            ctx.arc(0, 0, 50, 0, 2 * Math.PI); // Center circle
+            ctx.arc(0, 0, 60, 0, 2 * Math.PI); // Center circle (made slightly larger too)
             ctx.fillStyle = '#ff1493';
             ctx.fill();
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.stroke();
-            
+
             ctx.font = '700 18px Arial, sans-serif'; // PHISH text
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
