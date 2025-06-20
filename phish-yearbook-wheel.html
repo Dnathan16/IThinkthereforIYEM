@@ -10,7 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             background: #1a1a2e;
@@ -20,25 +20,25 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .container {
             text-align: center;
             padding: 20px;
         }
-        
+
         h1 {
             font-size: 2.5rem;
             margin-bottom: 20px;
             color: #ff1493;
         }
-        
+
         .wheel-container {
             position: relative;
             width: 400px;
             height: 400px;
             margin: 40px auto;
         }
-        
+
         .arrow {
             position: absolute;
             top: -40px;
@@ -52,14 +52,14 @@
             z-index: 10;
             filter: drop-shadow(0 0 10px #ff1493);
         }
-        
+
         canvas {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
         }
-        
+
         .spin-button {
             background: linear-gradient(135deg, #ff1493, #ff6b6b);
             color: white;
@@ -73,18 +73,28 @@
             transition: all 0.3s ease;
             margin-top: 30px;
         }
-        
+
         .spin-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 20, 147, 0.4);
+            opacity: 0.9;
         }
-        
+
+        .result {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em; /* Adjust gap as needed */
+            font-size: 2rem; /* Or match existing result font size */
+            margin-top: 20px; /* Or match existing margin */
+            color: #ff1493; /* Or match existing color */
+            font-weight: bold;
+        }
+
         .spin-button:disabled {
             background: #666;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .result {
             margin-top: 30px;
             font-size: 2rem;
@@ -98,12 +108,12 @@
     <div class="container">
         <h1>🎡 Lot Spinning Wheel 🎡</h1>
         <p>Can't decide what to grab in the lot? Spin to find out!</p>
-        
+
         <div class="wheel-container">
             <div class="arrow"></div>
             <canvas id="wheelCanvas" width="400" height="400"></canvas>
         </div>
-        
+
         <button class="spin-button" id="spinButton" onclick="spinWheel()">Spin the Wheel!</button>
         <div class="result" id="result"></div>
     </div>
@@ -111,25 +121,25 @@
     <script>
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         // Set device pixel ratio for sharp text
         const dpr = window.devicePixelRatio || 2;
-        const size = 400;
-        
+        const size = 440;
+
         canvas.width = size * dpr;
         canvas.height = size * dpr;
         canvas.style.width = size + 'px';
         canvas.style.height = size + 'px';
-        
+
         ctx.scale(dpr, dpr);
-        
+
         const centerX = size / 2;
         const centerY = size / 2;
-        const radius = 180;
-        
+        const radius = 200;
+
         let currentRotation = 0;
         let isSpinning = false;
-        
+
         const segments = [
             { label: 'Lot Dog', emoji: '🌭', color: '#ff6b6b' },
             { label: 'Grilled Cheese', emoji: '🧀', color: '#ffd93d' },
@@ -138,24 +148,20 @@
             { label: 'Pretzel', emoji: '🥨', color: '#c77828' },
             { label: 'Merch', emoji: '👕', color: '#a855f7' }
         ];
-        
-        function drawWheel(rotation = 0) {
+
+        function drawWheel() {
+            const rotationOffset = -Math.PI / 2; // Offset to start segment 0 at 12 o'clock
+            const anglePerSegment = 2 * Math.PI / segments.length;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
+
+            ctx.save(); // Save context for overall wheel rotation
             ctx.translate(centerX, centerY);
-            ctx.rotate(rotation);
-            
-            const anglePerSegment = (2 * Math.PI) / segments.length;
-            
+            ctx.rotate(currentRotation * Math.PI / 180); // Apply current wheel rotation
+
             segments.forEach((segment, i) => {
-                // Start angle for each segment
-                // i=0: starts at -90° (top)
-                // i=1: starts at -30° 
-                // i=2: starts at 30°
-                // etc.
-                const startAngle = i * anglePerSegment;
-                const endAngle = (i + 1) * anglePerSegment;
-                
+                const startAngle = i * anglePerSegment + rotationOffset;
+                const endAngle = (i + 1) * anglePerSegment + rotationOffset;
+
                 // Draw segment
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
@@ -163,154 +169,135 @@
                 ctx.closePath();
                 ctx.fillStyle = segment.color;
                 ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 6;
+                ctx.strokeStyle = '#1a1a2e';
+                ctx.lineWidth = 5;
                 ctx.stroke();
-                
-                // Enable sharp text rendering
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                
-                // Draw text with proper spacing
-                ctx.save();
-                ctx.rotate(startAngle + anglePerSegment / 2);
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // Draw emoji and text stacked vertically
-                ctx.font = '32px Arial';
+
+                // Draw text for this segment
+                ctx.save(); // Save context for this specific text block
+                const textAngle = i * anglePerSegment + anglePerSegment / 2 + rotationOffset;
+                ctx.rotate(textAngle); // Rotate for radiating text
+                ctx.textAlign = 'right';
                 ctx.fillStyle = 'white';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 4;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
-                
-                // Position emoji and text at same radius but vertically separated
-                const contentRadius = radius * 0.65;
-                ctx.fillText(segment.emoji, contentRadius, -20);
-                
-                // Reset shadow for cleaner text
-                ctx.shadowBlur = 0;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                
-                // Draw label below emoji
-                ctx.font = '600 16px Arial, sans-serif';
-                ctx.fillStyle = 'white';
-                
+
                 if (segment.label === 'Ice Cold Fatty') {
                     ctx.font = '600 14px Arial, sans-serif';
-                    ctx.fillText('Ice', contentRadius, 5);
-                    ctx.fillText('Cold', contentRadius, 20);
-                    ctx.fillText('Fatty', contentRadius, 35);
+                    ctx.fillText('Ice', radius - 30, -5);
+                    ctx.fillText('Cold', radius - 30, 10);
+                    ctx.fillText('Fatty', radius - 30, 25);
                 } else if (segment.label.includes(' ')) {
                     const words = segment.label.split(' ');
-                    ctx.fillText(words[0], contentRadius, 10);
-                    ctx.fillText(words[1], contentRadius, 26);
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(words[0], radius - 30, 0);
+                    if (words[1]) {
+                        ctx.fillText(words[1], radius - 30, 15);
+                    }
                 } else {
-                    ctx.fillText(segment.label, contentRadius, 10);
+                    ctx.font = 'bold 20px Arial';
+                    ctx.fillText(segment.label, radius - 30, 10);
                 }
-                
-                ctx.restore();
+                ctx.fillText(segment.emoji, radius - 85, 10);
+                ctx.restore(); // Restore context after this text block
             });
-            
-            // Draw center circle
+
+            // Draw center circle (after segments and their text)
             ctx.beginPath();
-            ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+            ctx.arc(0, 0, 60, 0, 2 * Math.PI); // Center circle (made slightly larger too)
             ctx.fillStyle = '#ff1493';
             ctx.fill();
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
             ctx.stroke();
-            
-            // Draw PHISH text
-            ctx.font = '700 18px Arial, sans-serif';
+
+            ctx.font = '700 18px Arial, sans-serif'; // PHISH text
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('PHISH', 0, 0);
-            
-            ctx.restore();
+
+            ctx.restore(); // Restore context after overall wheel rotation
         }
-        
+
         function spinWheel() {
             if (isSpinning) return;
-            
+
             isSpinning = true;
             const button = document.getElementById('spinButton');
             const resultDiv = document.getElementById('result');
             button.disabled = true;
-            resultDiv.textContent = '';
-            
-            // Random rotation amount
-            const extraSpins = 5 + Math.random() * 3;
-            const randomAngle = Math.random() * 360;
-            const totalDegrees = extraSpins * 360 + randomAngle;
-            const totalRadians = (totalDegrees * Math.PI) / 180;
-            
+            resultDiv.textContent = 'Spinning...';
+
+            const initialRotation = currentRotation; // Degrees
+            const randomSpins = Math.floor(Math.random() * 5) + 3; // 3 to 7 full spins
+            const randomExtraAngle = Math.random() * 360; // 0 to 359.99... degrees
+            const totalRotation = (randomSpins * 360) + randomExtraAngle; // Total rotation in degrees
+
+            const duration = 5000; // 5 seconds
             const startTime = Date.now();
-            const duration = 4000;
-            const startRotation = currentRotation;
-            
+
             function animate() {
                 const now = Date.now();
-                const elapsed = now - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                // Easing
-                const easeOut = 1 - Math.pow(1 - progress, 3);
-                
-                // Current rotation
-                const rotation = startRotation + (totalRadians * easeOut);
-                
-                drawWheel(rotation);
-                
+                const timePassed = now - startTime;
+                const progress = Math.min(timePassed / duration, 1); // 0 to 1
+
+                // Ease-out function - starts fast, slows down
+                const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+                currentRotation = initialRotation + totalRotation * easedProgress;
+                drawWheel(); // CORRECTLY PLACED: Re-draw the wheel with the new rotation
+
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
-                    // Set final rotation
-                    currentRotation = rotation;
-                    
-                    // Now determine which segment is at the top
-                    // Normalize rotation to 0-360 degrees
-                    let finalRotationDegrees = ((rotation * 180 / Math.PI) % 360 + 360) % 360;
-                    
-                    console.log('Final rotation:', finalRotationDegrees.toFixed(2), 'degrees');
-                    
-                    // The key insight: when rotation = 0, Lot Dog is at top
-                    // Each 60° of clockwise rotation moves the next segment to top
-                    // But segments are numbered clockwise, so we need to go backwards
-                    
-                    // At 246°, we've rotated 246/60 = 4.1 segments
-                    // Starting from Lot Dog (0), going backwards 4 segments...
-                    // 0 -> 5 -> 4 -> 3 -> 2 (but we need 0!)
-                    
-                    // The issue is the offset. Let's calculate it correctly:
-                    const rotationInSegments = finalRotationDegrees / 60;
-                    
-                    // The winning segment is the one that's currently at top
-                    // Since rotation moves segments counter-clockwise relative to arrow
-                    const segmentAtTop = (Math.round(360 - finalRotationDegrees) / 60) % 6;
-                    
-                    // But that's still not working. Let's try: what if at 240° rotation, Lot Dog is at top?
-                    // That means we need to subtract 240 from our rotation
-                    const adjustedRotation = (finalRotationDegrees - 240 + 360) % 360;
-                    const finalSegment = Math.floor(adjustedRotation / 60) % 6;
-                    
-                    console.log('Segment at top:', finalSegment, segments[finalSegment].label);
-                    
+                    // Animation finished
+                    // Ensure final rotation is set before calculating winner
+                    // The easing function should bring it to the final position, so this might be redundant
+                    // but let's keep it for now to ensure it lands exactly.
+                    currentRotation = initialRotation + totalRotation;
+                    drawWheel(); // Final draw at the exact landing spot
+
+                    const finalRotationDegrees = currentRotation;
+                    const segmentAngle = 360 / segments.length;
+
+                    const effectiveRotation = (finalRotationDegrees % 360 + 360) % 360;
+
+                    const targetAngle = (360 - effectiveRotation) % 360;
+
+                    const finalSegment = Math.floor(targetAngle / segmentAngle);
+
+                    console.log('Raw currentRotation at stop:', currentRotation.toFixed(2));
+                    console.log('Final effective rotation (clockwise, degrees):', effectiveRotation.toFixed(2));
+                    console.log('Target angle for segment lookup (degrees):', targetAngle.toFixed(2));
+                    console.log('Segment angle (degrees):', segmentAngle);
+                    console.log('Calculated winning segment index:', finalSegment, segments[finalSegment] ? segments[finalSegment].label : 'Error: segment undefined');
+
                     const winner = segments[finalSegment];
-                    
-                    // Show result
-                    resultDiv.textContent = `${winner.emoji} ${winner.label} ${winner.emoji}`;
+                    console.log('Winner object:', winner);
+
+                    if (winner && winner.label) {
+                        const winnerLabel = winner.label;
+                        const winnerEmoji = winner.emoji || '';
+                        let htmlContent = '';
+                        if (winnerEmoji) {
+                            htmlContent += `<span>${winnerEmoji}</span>`;
+                        }
+                        htmlContent += `<span>${winnerLabel}</span>`;
+                        if (winnerEmoji) {
+                            htmlContent += `<span>${winnerEmoji}</span>`;
+                        }
+                        resultDiv.innerHTML = htmlContent;
+                    } else {
+                        resultDiv.textContent = 'Error: Could not determine winner.';
+                        console.error('Winner object is invalid or missing label:', winner, 'Index:', finalSegment);
+                    }
                     button.disabled = false;
                     isSpinning = false;
                 }
             }
-            
+
             animate();
         }
-        
+
         // Initial draw
         drawWheel();
     </script>
