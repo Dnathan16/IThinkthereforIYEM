@@ -4,7 +4,7 @@ const phishSongs = [
     "Tweezer", "Chalk Dust Torture", "Down with Disease", "46 Days", "Harry Hood",
     "Character Zero", "Slave to the Traffic Light", "Tube", "Tweezer Reprise", "Ghost",
     "The Moma Dance", "Wolfman's Brother", "Wilson", "Fluffhead", "Possum", "You Enjoy Myself",
-    
+
     // Frequent favorites (20-39 times)
     "Mike's Song", "Weekapaug Groove", "AC/DC Bag", "David Bowie", "Cavern", "Carini",
     "Punch You in the Eye", "Free", "Sample in a Jar", "Julius", "The Squirming Coil",
@@ -14,7 +14,7 @@ const phishSongs = [
     "Divided Sky", "The Lizards", "Backwards Down the Number Line", "Joy", "Alaska",
     "Cities", "Simple", "Kill Devil Falls", "Everything's Right", "Llama", "Gumbo",
     "Bug", "Waste", "The Wedge", "Fee", "Stash",
-    
+
     // Medium frequency songs
     "Runaway Jim", "Sparkle", "Horn", "Strange Design", "Theme From the Bottom",
     "Gotta Jibboo", "NICU", "My Sweet One", "Axilla", "Rift",
@@ -26,7 +26,7 @@ const phishSongs = [
     "Brian and Robert", "Cars Trucks Buses", "Contact", "Coil", "Cool It Down",
     "Demand", "Dog Faced Boy", "Faht", "Fast Enough for You", "Frankie Says",
     "Ginseng Sullivan", "Guelah Papyrus", "Halley's Comet", "I Am Hydrogen",
-    
+
     // Rare gems and bust-outs
     "Lengthwise", "Loving Cup", "My Soul", "Prince Caspian", "Rock and Roll", "The Horse",
     "The Oh Kee Pa Ceremony", "Timber (Jerry the Mule)", "Vultures", "Weigh", "Also Sprach Zarathustra",
@@ -37,7 +37,7 @@ const phishSongs = [
     "My Friend, My Friend", "Ocelot", "Poor Heart", "Roggae", "Say It To Me S.A.N.T.O.S.",
     "Secret Smile", "Silent in the Morning", "Skin It Back", "Sleeping Monkey", "Taste",
     "The Curtain", "The Curtain With", "The Sloth", "Turtle in the Clouds",
-    
+
     // Super rare bust-outs
     "Colonel Forbin's Ascent", "The Famous Mockingbird", "Narration", "The Man Who Stepped Into Yesterday",
     "And So To Bed", "Axilla (Part II)", "Big Ball Jam", "Bundle of Joy", "Crimes of the Mind",
@@ -108,11 +108,11 @@ function showTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
-    
+
     document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
     });
-    
+
     document.getElementById(tabName).classList.add('active');
     event.target.classList.add('active');
 }
@@ -122,12 +122,12 @@ function spinSongRoulette() {
     const rouletteElement = document.getElementById('rouletteSong');
     let spins = 0;
     const maxSpins = 20;
-    
+
     const spinInterval = setInterval(() => {
         const randomSong = phishSongs[Math.floor(Math.random() * phishSongs.length)];
         rouletteElement.textContent = randomSong;
         spins++;
-        
+
         if (spins >= maxSpins) {
             clearInterval(spinInterval);
             rouletteElement.style.color = '#00ff88';
@@ -140,7 +140,7 @@ function spinSongRoulette() {
 function predictOpener(type) {
     let prediction = '';
     let message = '';
-    
+
     switch(type) {
         case 'likely':
             const likelyOpeners = jordanOpeners.mostLikely;
@@ -148,23 +148,23 @@ function predictOpener(type) {
             prediction = pick.song;
             message = `${prediction} - Jordan has seen this open ${pick.count} times! 📈`;
             break;
-            
+
         case 'rare':
             prediction = jordanOpeners.rare[Math.floor(Math.random() * jordanOpeners.rare.length)];
             message = `${prediction} - Only opened once in Jordan's 199 shows! 🦄`;
             break;
-            
+
         case 'never':
             prediction = jordanOpeners.neverOpener[Math.floor(Math.random() * jordanOpeners.neverOpener.length)];
             message = `${prediction} - Would be a first-time opener for Jordan! 🎭`;
             break;
-            
+
         case 'milestone':
             prediction = jordanOpeners.milestone[Math.floor(Math.random() * jordanOpeners.milestone.length)];
             message = `${prediction} - Perfect for show #200! 🎊`;
             break;
     }
-    
+
     showNotification(message);
 }
 
@@ -178,16 +178,16 @@ function spinLotFood() {
         { item: "Pretzel", emoji: "🥨" },
         { item: "Merch", emoji: "👕" }
     ];
-    
+
     const resultElement = document.getElementById('lotFoodResult');
     let spins = 0;
     const maxSpins = 20;
-    
+
     const spinInterval = setInterval(() => {
         const randomFood = lotFood[Math.floor(Math.random() * lotFood.length)];
         resultElement.innerHTML = `${randomFood.emoji} ${randomFood.item}`;
         spins++;
-        
+
         if (spins >= maxSpins) {
             clearInterval(spinInterval);
             resultElement.style.color = '#00ff88';
@@ -208,7 +208,7 @@ function venueClick(element) {
         'Fenway Park': 'Playing where the Red Sox play! ⚾',
         'Forest Hills': 'The milestone show destination! 🎯'
     };
-    
+
     const text = element.textContent.trim();
     const venueKey = Object.keys(venues).find(key => text.includes(key));
     if (venueKey && venues[venueKey]) {
@@ -217,25 +217,78 @@ function venueClick(element) {
 }
 
 // Glow stick throwing
-function throwGlowStick(stick) {
-    stick.style.animation = 'none';
-    stick.style.transform = 'translateY(-100vh) rotate(720deg)';
-    stick.style.transition = 'all 2s ease-out';
-    
+// Glow stick colors and shadows (match these with your CSS .glow-stick:nth-child definitions)
+const glowStickStyles = [
+    { background: 'linear-gradient(to bottom, #ff0088, #ff44aa)', boxShadow: '0 0 15px #ff0088' }, // Pink
+    { background: 'linear-gradient(to bottom, #00ff88, #44ffaa)', boxShadow: '0 0 15px #00ff88' }, // Green
+    { background: 'linear-gradient(to bottom, #0088ff, #44aaff)', boxShadow: '0 0 15px #0088ff' }, // Blue
+    { background: 'linear-gradient(to bottom, #ffeb3b, #fff176)', boxShadow: '0 0 15px #ffeb3b' }  // Yellow
+];
+
+// Glow stick confetti throwing
+function throwGlowStick(clickedStickElement) {
+    const numberOfConfetti = 75; // Number of confetti pieces
+    const confettiContainer = document.getElementById('floatingElements');
+
+    // Brief feedback animation for the clicked stick
+    const originalAnimation = clickedStickElement.style.animation;
+    clickedStickElement.style.animation = 'glowStickClickFeedback 0.3s ease-in-out';
     setTimeout(() => {
-        stick.style.animation = 'glowStickBounce 2s ease-in-out infinite';
-        stick.style.transform = '';
-        stick.style.transition = '';
-    }, 2000);
-    
-    showNotification('Glow stick thrown! 🌟');
+        clickedStickElement.style.animation = originalAnimation; // Restore original bounce
+    }, 300);
+
+    const originRect = clickedStickElement.getBoundingClientRect();
+    // Calculate origin relative to the viewport, as floatingElements is fixed
+    const originX = originRect.left + (originRect.width / 2);
+    const originY = originRect.top + (originRect.height / 2);
+
+    for (let i = 0; i < numberOfConfetti; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-glow-stick';
+
+        const styleChoice = glowStickStyles[Math.floor(Math.random() * glowStickStyles.length)];
+        confetti.style.background = styleChoice.background;
+        confetti.style.boxShadow = styleChoice.boxShadow;
+
+        // Set initial position at the center of the clicked stick
+        confetti.style.left = `${originX}px`;
+        confetti.style.top = `${originY}px`;
+
+        // Randomize animation properties using CSS custom properties
+        // Spread confetti in a ~180-degree arc upwards
+        const angle = (Math.random() * Math.PI) - (Math.PI / 2); // -PI/2 to PI/2 (straight up to sides)
+        const spreadDistance = window.innerHeight * 1.0 + (Math.random() * window.innerHeight * 0.5); // Fly 100-150% of screen height
+
+        const confettiX = Math.cos(angle - Math.PI/2) * spreadDistance * (Math.random() * 0.5 + 0.5); // Adjust spread width
+        const confettiY = Math.sin(angle - Math.PI/2) * spreadDistance;
+        const confettiRot = (Math.random() - 0.5) * 1080; // Rotate up to 3 full turns
+        const duration = Math.random() * 1.5 + 2.0; // Duration 2s to 3.5s
+
+        confetti.style.setProperty('--confetti-x', `${confettiX}px`);
+        confetti.style.setProperty('--confetti-y', `${confettiY}px`);
+        confetti.style.setProperty('--confetti-rot', `${confettiRot}deg`);
+        confetti.style.animationDuration = `${duration}s`;
+        // Optional: Stagger start times slightly for a more natural burst
+        // confetti.style.animationDelay = `${Math.random() * 0.1}s`;
+
+        confettiContainer.appendChild(confetti);
+
+        // Remove confetti after animation to prevent DOM clutter
+        confetti.addEventListener('animationend', () => {
+            if (confetti.parentNode) {
+                confetti.parentNode.removeChild(confetti);
+            }
+        });
+    }
+
+    showNotification('hell yeah!');
 }
 
 // Setlist builder functions
 function addSong() {
     const songInput = document.getElementById('songInput');
     const songName = songInput.value.trim();
-    
+
     if (songName) {
         currentSetlist.push(songName);
         updateSetlistDisplay();
@@ -248,7 +301,7 @@ function updateSetlistDisplay() {
     if (currentSetlist.length === 0) {
         display.innerHTML = '<p style="color: rgba(255, 255, 255, 0.6);">Your predicted setlist will appear here...</p>';
     } else {
-        display.innerHTML = currentSetlist.map(song => 
+        display.innerHTML = currentSetlist.map(song =>
             `<span style="display: inline-block; background: linear-gradient(45deg, #0088ff, #00ff88); color: white; padding: 6px 12px; margin: 3px; border-radius: 15px; font-size: 0.9rem;">${song}</span>`
         ).join('');
     }
@@ -256,12 +309,12 @@ function updateSetlistDisplay() {
 
 function saveSetlist() {
     const predictorName = document.getElementById('predictorName').value || 'Anonymous';
-    
+
     if (currentSetlist.length === 0) {
         showNotification('Please add some songs first!');
         return;
     }
-    
+
     const setlistCard = document.createElement('div');
     setlistCard.className = 'message-card';
     setlistCard.innerHTML = `
@@ -276,13 +329,13 @@ function saveSetlist() {
             </div>
         </div>
     `;
-    
+
     document.getElementById('setlistWall').insertBefore(setlistCard, document.getElementById('setlistWall').firstChild);
-    
+
     currentSetlist = [];
     updateSetlistDisplay();
     document.getElementById('predictorName').value = '';
-    
+
     showNotification('Setlist prediction saved!');
 }
 
@@ -290,12 +343,12 @@ function saveSetlist() {
 function handlePhotoUpload(event) {
     const files = event.target.files;
     const gallery = document.getElementById('photos-gallery');
-    
+
     if (files.length > 0) {
         if (gallery.innerHTML.includes('Uploaded photos will appear here')) {
             gallery.innerHTML = '<h3 style="color: #00ff88; margin-bottom: 20px;">📷 Photo Gallery</h3>';
         }
-        
+
         Array.from(files).forEach(file => {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
@@ -311,7 +364,7 @@ function handlePhotoUpload(event) {
                 reader.readAsDataURL(file);
             }
         });
-        
+
         showNotification(`${files.length} photo(s) uploaded! 📸`);
     }
 }
@@ -320,12 +373,12 @@ function handlePhotoUpload(event) {
 function handleVideoUpload(event) {
     const files = event.target.files;
     const gallery = document.getElementById('videos-gallery');
-    
+
     if (files.length > 0) {
         if (gallery.innerHTML.includes('Uploaded videos will appear here')) {
             gallery.innerHTML = '<h3 style="color: #ff0088; margin-bottom: 20px;">🎬 Video Gallery</h3>';
         }
-        
+
         Array.from(files).forEach(file => {
             if (file.type.startsWith('video/')) {
                 const videoURL = URL.createObjectURL(file);
@@ -341,7 +394,7 @@ function handleVideoUpload(event) {
                 gallery.innerHTML += videoHTML;
             }
         });
-        
+
         showNotification(`${files.length} video(s) uploaded! 🎥`);
     }
 }
@@ -353,9 +406,9 @@ function createFloatingOrb() {
     orb.style.left = Math.random() * window.innerWidth + 'px';
     orb.style.animationDelay = Math.random() * 5 + 's';
     orb.style.animationDuration = (Math.random() * 10 + 10) + 's';
-    
+
     document.getElementById('floatingElements').appendChild(orb);
-    
+
     setTimeout(() => orb.remove(), 15000);
 }
 
@@ -377,9 +430,9 @@ function showNotification(message) {
         border: 2px solid rgba(255, 255, 255, 0.2);
     `;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.5s ease forwards';
         setTimeout(() => notification.remove(), 500);
@@ -393,7 +446,7 @@ style.textContent = `
         from { transform: translateX(100%); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
     }
-    
+
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
@@ -408,10 +461,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (messageForm) {
         messageForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const author = document.getElementById('authorName').value;
             const content = document.getElementById('messageContent').value;
-            
+
             const messageCard = document.createElement('div');
             messageCard.className = 'message-card';
             messageCard.innerHTML = `
@@ -421,23 +474,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="message-content">${content}</div>
             `;
-            
+
             document.getElementById('messageWall').insertBefore(messageCard, document.getElementById('messageWall').firstChild);
-            
+
             this.reset();
             showNotification('Message added successfully!');
         });
     }
-    
+
     const memoryForm = document.getElementById('memoryForm');
     if (memoryForm) {
         memoryForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const author = document.getElementById('memoryAuthor').value;
             const show = document.getElementById('memoryShow').value;
             const content = document.getElementById('memoryContent').value;
-            
+
             const showText = show ? `<em style="color: #4ecdc4;">${show}</em><br>` : '';
             const memoryCard = document.createElement('div');
             memoryCard.className = 'message-card';
@@ -448,14 +501,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="message-content">${showText}${content}</div>
             `;
-            
+
             document.getElementById('memoryWall').insertBefore(memoryCard, document.getElementById('memoryWall').firstChild);
-            
+
             this.reset();
             showNotification('Memory added successfully!');
         });
     }
-    
+
     // Song input enter key
     const songInput = document.getElementById('songInput');
     if (songInput) {
@@ -465,37 +518,37 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Define the food spinner as a global function
     window.spinFood = function() {
         const lotFood = [
             "🌭 Lot Dog",
-            "🧀 Grilled Cheese", 
+            "🧀 Grilled Cheese",
             "🌯 Burrito",
             "🧊 Ice Cold Fatty",
             "🥨 Pretzel",
             "👕 Merch"
         ];
-        
+
         const resultElement = document.getElementById('lotFoodResult');
         if (!resultElement) return;
-        
+
         // Simple random selection
         const randomChoice = lotFood[Math.floor(Math.random() * lotFood.length)];
         resultElement.innerHTML = randomChoice;
         resultElement.style.color = '#00ff88';
-        
+
         showNotification(`You're buying: ${randomChoice}!`);
     };
-    
+
     // Create floating orbs periodically
     setInterval(createFloatingOrb, 2000);
-    
+
     // Add initial floating orbs
     for (let i = 0; i < 5; i++) {
         setTimeout(createFloatingOrb, i * 500);
     }
-    
+
     // Add click effects to stat cards
     document.querySelectorAll('.stat-card').forEach(card => {
         card.addEventListener('click', () => {

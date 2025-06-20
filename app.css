@@ -748,6 +748,11 @@ body {
     animation-delay: 0.9s;
 }
 
+@keyframes glowStickClickFeedback {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
 @keyframes glowStickBounce {
     0%, 100% { transform: translateY(0px) rotate(-5deg); }
     50% { transform: translateY(-15px) rotate(5deg); }
@@ -761,6 +766,31 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 1000;
+}
+
+.confetti-glow-stick {
+    position: absolute; /* Relative to parent, which will be floatingElements (fixed) */
+    width: 6px;
+    height: 30px;
+    border-radius: 8px;
+    pointer-events: none;
+    animation-name: confettiFly;
+    animation-timing-function: cubic-bezier(0.34, 0.91, 0.68, 0.99);
+    animation-fill-mode: forwards; /* Keeps it at the end state (invisible) before removal */
+    /* background and box-shadow will be set by JS */
+    /* animation-duration will be set by JS */
+    /* transform-origin for rotation if needed, default is center */
+}
+
+@keyframes confettiFly {
+    0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--confetti-x), var(--confetti-y)) rotate(var(--confetti-rot)) scale(0.5);
+        opacity: 0;
+    }
 }
 
 .floating-orb {
