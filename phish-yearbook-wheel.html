@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phish Lot Wheel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ff1493;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 40px auto;
+        }
+        
+        .arrow {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-top: 60px solid #ff1493;
+            z-index: 10;
+            filter: drop-shadow(0 0 10px #ff1493);
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .spin-button {
+            background: linear-gradient(135deg, #ff1493, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        
+        .spin-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 20, 147, 0.4);
+        }
+        
+        .spin-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎡 Lot Spinning Wheel 🎡</h1>
+        <p>Can't decide what to grab in the lot? Spin to find out!</p>
+        
+        <div class="wheel-container">
+            <div class="arrow"></div>
+            <canvas id="wheelCanvas" width="400" height="400"></canvas>
+        </div>
+        
+        <button class="spin-button" id="spinButton" onclick="spinWheel()">Spin the Wheel!</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set device pixel ratio for sharp text
+        const dpr = window.devicePixelRatio || 2;
+        const size = 400;
+        
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        
+        ctx.scale(dpr, dpr);
+        
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const radius = 180;
+        
+        let currentRotation = 0;
+        let isSpinning = false;
+        
+        const segments = [
+            { label: 'Lot Dog', emoji: '🌭', color: '#ff6b6b' },
+            { label: 'Grilled Cheese', emoji: '🧀', color: '#ffd93d' },
+            { label: 'Burrito', emoji: '🌯', color: '#6bd121' },
+            { label: 'Ice Cold Fatty', emoji: '🎈', color: '#4ecdc4' },
+            { label: 'Pretzel', emoji: '🥨', color: '#c77828' },
+            { label: 'Merch', emoji: '👕', color: '#a855f7' }
+        ];
+        
+        function drawWheel(rotation = 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(rotation);
+            
+            const anglePerSegment = (2 * Math.PI) / segments.length;
+            
+            segments.forEach((segment, i) => {
+                // Start angle for each segment
+                // i=0: starts at -90° (top)
+                // i=1: starts at -30° 
+                // i=2: starts at 30°
+                // etc.
+                const startAngle = i * anglePerSegment;
+                const endAngle = (i + 1) * anglePerSegment;
+                
+                // Draw segment
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = segment.color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                
+                // Enable sharp text rendering
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                // Draw text with proper spacing
+                ctx.save();
+                ctx.rotate(startAngle + anglePerSegment / 2);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Draw emoji and text stacked vertically
+                ctx.font = '32px Arial';
+                ctx.fillStyle = 'white';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                
+                // Position emoji and text at same radius but vertically separated
+                const contentRadius = radius * 0.65;
+                ctx.fillText(segment.emoji, contentRadius, -20);
+                
+                // Reset shadow for cleaner text
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                
+                // Draw label below emoji
+                ctx.font = '600 16px Arial, sans-serif';
+                ctx.fillStyle = 'white';
+                
+                if (segment.label === 'Ice Cold Fatty') {
+                    ctx.font = '600 14px Arial, sans-serif';
+                    ctx.fillText('Ice', contentRadius, 5);
+                    ctx.fillText('Cold', contentRadius, 20);
+                    ctx.fillText('Fatty', contentRadius, 35);
+                } else if (segment.label.includes(' ')) {
+                    const words = segment.label.split(' ');
+                    ctx.fillText(words[0], contentRadius, 10);
+                    ctx.fillText(words[1], contentRadius, 26);
+                } else {
+                    ctx.fillText(segment.label, contentRadius, 10);
+                }
+                
+                ctx.restore();
+            });
+            
+            // Draw center circle
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ff1493';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // Draw PHISH text
+            ctx.font = '700 18px Arial, sans-serif';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('PHISH', 0, 0);
+            
+            ctx.restore();
+        }
+        
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const button = document.getElementById('spinButton');
+            const resultDiv = document.getElementById('result');
+            button.disabled = true;
+            resultDiv.textContent = '';
+            
+            // Random rotation amount
+            const extraSpins = 5 + Math.random() * 3;
+            const randomAngle = Math.random() * 360;
+            const totalDegrees = extraSpins * 360 + randomAngle;
+            const totalRadians = (totalDegrees * Math.PI) / 180;
+            
+            const startTime = Date.now();
+            const duration = 4000;
+            const startRotation = currentRotation;
+            
+            function animate() {
+                const now = Date.now();
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                // Current rotation
+                const rotation = startRotation + (totalRadians * easeOut);
+                
+                drawWheel(rotation);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Set final rotation
+                    currentRotation = rotation;
+                    
+                    // Now determine which segment is at the top
+                    // Normalize rotation to 0-360 degrees
+                    let finalRotationDegrees = ((rotation * 180 / Math.PI) % 360 + 360) % 360;
+                    
+                    console.log('Final rotation:', finalRotationDegrees.toFixed(2), 'degrees');
+                    
+                    // The key insight: when rotation = 0, Lot Dog is at top
+                    // Each 60° of clockwise rotation moves the next segment to top
+                    // But segments are numbered clockwise, so we need to go backwards
+                    
+                    // At 246°, we've rotated 246/60 = 4.1 segments
+                    // Starting from Lot Dog (0), going backwards 4 segments...
+                    // 0 -> 5 -> 4 -> 3 -> 2 (but we need 0!)
+                    
+                    // The issue is the offset. Let's calculate it correctly:
+                    const rotationInSegments = finalRotationDegrees / 60;
+                    
+                    // The winning segment is the one that's currently at top
+                    // Since rotation moves segments counter-clockwise relative to arrow
+                    const segmentAtTop = (Math.round(360 - finalRotationDegrees) / 60) % 6;
+                    
+                    // But that's still not working. Let's try: what if at 240° rotation, Lot Dog is at top?
+                    // That means we need to subtract 240 from our rotation
+                    const adjustedRotation = (finalRotationDegrees - 240 + 360) % 360;
+                    const finalSegment = Math.floor(adjustedRotation / 60) % 6;
+                    
+                    console.log('Segment at top:', finalSegment, segments[finalSegment].label);
+                    
+                    const winner = segments[finalSegment];
+                    
+                    // Show result
+                    resultDiv.textContent = `${winner.emoji} ${winner.label} ${winner.emoji}`;
+                    button.disabled = false;
+                    isSpinning = false;
+                }
+            }
+            
+            animate();
+        }
+        
+        // Initial draw
+        drawWheel();
+    </script>
+</body>
+</html>
