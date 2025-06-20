@@ -182,21 +182,21 @@
 
                 if (segment.label === 'Ice Cold Fatty') {
                     ctx.font = '600 14px Arial, sans-serif';
-                    ctx.fillText('Ice', radius - 30, -5);
-                    ctx.fillText('Cold', radius - 30, 10);
-                    ctx.fillText('Fatty', radius - 30, 25);
+                    ctx.fillText('Ice', radius - 20, -5);
+                    ctx.fillText('Cold', radius - 20, 10);
+                    ctx.fillText('Fatty', radius - 20, 25);
                 } else if (segment.label.includes(' ')) {
                     const words = segment.label.split(' ');
                     ctx.font = 'bold 16px Arial';
-                    ctx.fillText(words[0], radius - 30, 0);
+                    ctx.fillText(words[0], radius - 20, 0);
                     if (words[1]) {
-                        ctx.fillText(words[1], radius - 30, 15);
+                        ctx.fillText(words[1], radius - 20, 15);
                     }
                 } else {
                     ctx.font = 'bold 20px Arial';
-                    ctx.fillText(segment.label, radius - 30, 10);
+                    ctx.fillText(segment.label, radius - 20, 10);
                 }
-                ctx.fillText(segment.emoji, radius - 85, 10);
+                ctx.fillText(segment.emoji, radius - 95, 10);
                 ctx.restore(); // Restore context after this text block
             });
 
