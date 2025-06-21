@@ -565,3 +565,184 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set device pixel ratio for sharp text
+        const dpr = window.devicePixelRatio || 2;
+        const size = 440;
+
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+
+        ctx.scale(dpr, dpr);
+
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const radius = 200;
+
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        const segments = [
+            { label: 'Lot Dog', emoji: '🌭', color: '#ff6b6b' },
+            { label: 'Grilled Cheese', emoji: '🧀', color: '#ffd93d' },
+            { label: 'Burrito', emoji: '🌯', color: '#6bd121' },
+            { label: 'Ice Cold Fatty', emoji: '🎈', color: '#4ecdc4' },
+            { label: 'Pretzel', emoji: '🥨', color: '#c77828' },
+            { label: 'Merch', emoji: '👕', color: '#a855f7' }
+        ];
+
+        function drawWheel() {
+            const rotationOffset = -Math.PI / 2; // Offset to start segment 0 at 12 o'clock
+            const anglePerSegment = 2 * Math.PI / segments.length;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save(); // Save context for overall wheel rotation
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentRotation * Math.PI / 180); // Apply current wheel rotation
+
+            segments.forEach((segment, i) => {
+                const startAngle = i * anglePerSegment + rotationOffset;
+                const endAngle = (i + 1) * anglePerSegment + rotationOffset;
+
+                // Draw segment
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = segment.color;
+                ctx.fill();
+                ctx.strokeStyle = '#1a1a2e';
+                ctx.lineWidth = 5;
+                ctx.stroke();
+
+                // Draw text for this segment
+                ctx.save(); // Save context for this specific text block
+                const textAngle = i * anglePerSegment + anglePerSegment / 2 + rotationOffset;
+                ctx.rotate(textAngle); // Rotate for radiating text
+                ctx.textAlign = 'right';
+                ctx.fillStyle = 'white';
+
+                if (segment.label === 'Ice Cold Fatty') {
+                    ctx.font = '600 14px Arial, sans-serif';
+                    ctx.fillText('Ice', radius - 20, -5);
+                    ctx.fillText('Cold', radius - 20, 10);
+                    ctx.fillText('Fatty', radius - 20, 25);
+                } else if (segment.label.includes(' ')) {
+                    const words = segment.label.split(' ');
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(words[0], radius - 20, 0);
+                    if (words[1]) {
+                        ctx.fillText(words[1], radius - 20, 15);
+                    }
+                } else {
+                    ctx.font = 'bold 20px Arial';
+                    ctx.fillText(segment.label, radius - 20, 10);
+                }
+                ctx.fillText(segment.emoji, radius - 95, 10);
+                ctx.restore(); // Restore context after this text block
+            });
+
+            // Draw center circle (after segments and their text)
+            ctx.beginPath();
+            ctx.arc(0, 0, 60, 0, 2 * Math.PI); // Center circle (made slightly larger too)
+            ctx.fillStyle = '#ff1493';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            ctx.font = '700 18px Arial, sans-serif'; // PHISH text
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('PHISH', 0, 0);
+
+            ctx.restore(); // Restore context after overall wheel rotation
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+
+            isSpinning = true;
+            const button = document.getElementById('spinButton');
+            const resultDiv = document.getElementById('result');
+            button.disabled = true;
+            resultDiv.textContent = 'Spinning...';
+
+            const initialRotation = currentRotation; // Degrees
+            const randomSpins = Math.floor(Math.random() * 5) + 3; // 3 to 7 full spins
+            const randomExtraAngle = Math.random() * 360; // 0 to 359.99... degrees
+            const totalRotation = (randomSpins * 360) + randomExtraAngle; // Total rotation in degrees
+
+            const duration = 5000; // 5 seconds
+            const startTime = Date.now();
+
+            function animate() {
+                const now = Date.now();
+                const timePassed = now - startTime;
+                const progress = Math.min(timePassed / duration, 1); // 0 to 1
+
+                // Ease-out function - starts fast, slows down
+                const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+                currentRotation = initialRotation + totalRotation * easedProgress;
+                drawWheel(); // CORRECTLY PLACED: Re-draw the wheel with the new rotation
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Animation finished
+                    // Ensure final rotation is set before calculating winner
+                    // The easing function should bring it to the final position, so this might be redundant
+                    // but let's keep it for now to ensure it lands exactly.
+                    currentRotation = initialRotation + totalRotation;
+                    drawWheel(); // Final draw at the exact landing spot
+
+                    const finalRotationDegrees = currentRotation;
+                    const segmentAngle = 360 / segments.length;
+
+                    const effectiveRotation = (finalRotationDegrees % 360 + 360) % 360;
+
+                    const targetAngle = (360 - effectiveRotation) % 360;
+
+                    const finalSegment = Math.floor(targetAngle / segmentAngle);
+
+                    console.log('Raw currentRotation at stop:', currentRotation.toFixed(2));
+                    console.log('Final effective rotation (clockwise, degrees):', effectiveRotation.toFixed(2));
+                    console.log('Target angle for segment lookup (degrees):', targetAngle.toFixed(2));
+                    console.log('Segment angle (degrees):', segmentAngle);
+                    console.log('Calculated winning segment index:', finalSegment, segments[finalSegment] ? segments[finalSegment].label : 'Error: segment undefined');
+
+                    const winner = segments[finalSegment];
+                    console.log('Winner object:', winner);
+
+                    if (winner && winner.label) {
+                        const winnerLabel = winner.label;
+                        const winnerEmoji = winner.emoji || '';
+                        let htmlContent = '';
+                        if (winnerEmoji) {
+                            htmlContent += `<span>${winnerEmoji}</span>`;
+                        }
+                        htmlContent += `<span>${winnerLabel}</span>`;
+                        if (winnerEmoji) {
+                            htmlContent += `<span>${winnerEmoji}</span>`;
+                        }
+                        resultDiv.innerHTML = htmlContent;
+                    } else {
+                        resultDiv.textContent = 'Error: Could not determine winner.';
+                        console.error('Winner object is invalid or missing label:', winner, 'Index:', finalSegment);
+                    }
+                    button.disabled = false;
+                    isSpinning = false;
+                }
+            }
+
+            animate();
+        }
+
+        // Initial draw
+        drawWheel();
