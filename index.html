@@ -37,6 +37,81 @@
                 <div class="tab" onclick="showTab('predictions')">Predictions</div>
             </div>
         </div>
+
+
+
+
+
+
+<!-- Add this to your HTML to test -->
+<div style="margin: 20px; padding: 20px; border: 2px solid red;">
+  <h3>TEST: Photo Upload Form</h3>
+  
+  <form id="photo-form">
+    <label>Select Photo:</label><br>
+    <input type="file" id="photo-input" accept="image/*" required><br><br>
+    
+    <label>Your Name:</label><br>
+    <input type="text" id="photo-name" placeholder="Your Name" required><br><br>
+    
+    <label>Your Email:</label><br>
+    <input type="email" id="photo-email" placeholder="Your Email" required><br><br>
+    
+    <label>Show Date:</label><br>
+    <input type="date" id="photo-show-date"><br><br>
+    
+    <label>Venue:</label><br>
+    <input type="text" id="photo-venue" placeholder="Venue"><br><br>
+    
+    <label>Description:</label><br>
+    <textarea id="photo-description" placeholder="Tell us about this photo..."></textarea><br><br>
+    
+    <button type="submit">Upload Photo</button>
+  </form>
+</div>
+
+<!-- Add the JavaScript too -->
+<script>
+// Test if JavaScript is loading
+console.log('JavaScript is loading!');
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded');
+  
+  const photoForm = document.getElementById('photo-form');
+  console.log('Photo form found:', photoForm);
+  
+  if (photoForm) {
+    photoForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      console.log('Form submitted!');
+      alert('Form submission triggered - check console for details');
+      
+      // Test file input
+      const fileInput = document.getElementById('photo-input');
+      console.log('File input:', fileInput);
+      console.log('Selected files:', fileInput.files);
+      
+      if (fileInput.files[0]) {
+        console.log('File selected:', fileInput.files[0].name);
+      } else {
+        console.log('No file selected');
+      }
+    });
+  } else {
+    console.log('ERROR: Photo form not found!');
+  }
+});
+</script>
+
+
+
+
+
+
+
+
+
         <!-- Photo Upload Form -->
 <form id="photo-form" class="upload-form">
   <h3>Share Your Concert Photos!</h3>
