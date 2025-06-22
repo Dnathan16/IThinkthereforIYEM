@@ -37,6 +37,114 @@
                 <div class="tab" onclick="showTab('predictions')">Predictions</div>
             </div>
         </div>
+        <!-- Photo Upload Form -->
+<form id="photo-form" class="upload-form">
+  <h3>Share Your Concert Photos!</h3>
+  
+  <input type="file" id="photo-input" accept="image/*" required>
+  
+  <input type="text" id="photo-name" placeholder="Your Name" required>
+  <input type="email" id="photo-email" placeholder="Your Email" required>
+  <input type="date" id="photo-show-date" placeholder="Show Date">
+  <input type="text" id="photo-venue" placeholder="Venue">
+  <textarea id="photo-description" placeholder="Tell us about this photo..."></textarea>
+  
+  <button type="submit">Upload Photo</button>
+</form>
+
+<!-- Photos Display Container -->
+<div id="photos-container">
+  <!-- Photos will be loaded here dynamically -->
+</div>
+
+<!-- Video Upload Form -->
+<form id="video-form" class="upload-form">
+  <h3>Share Concert Videos!</h3>
+  
+  <input type="file" id="video-input" accept="video/*" required>
+  
+  <input type="text" id="video-name" placeholder="Your Name" required>
+  <input type="email" id="video-email" placeholder="Your Email" required>
+  <input type="date" id="video-show-date" placeholder="Show Date">
+  <input type="text" id="video-venue" placeholder="Venue">
+  <textarea id="video-description" placeholder="Tell us about this video..."></textarea>
+  
+  <button type="submit">Upload Video</button>
+</form>
+
+<!-- Videos Display Container -->
+<div id="videos-container">
+  <!-- Videos will be loaded here dynamically -->
+</div>
+
+<!-- Message Form -->
+<form id="message-form" class="upload-form">
+  <h3>Send a Message About the Milestone Show!</h3>
+  
+  <input type="text" name="name" placeholder="Your Name" required>
+  <input type="email" name="email" placeholder="Your Email" required>
+  <textarea name="message" placeholder="Your message about Jordan's 200th show..." required></textarea>
+  
+  <button type="submit">Send Message</button>
+</form>
+
+<!-- Messages Display -->
+<div id="messages-container">
+  <!-- Messages will be loaded here -->
+</div>
+
+<style>
+.upload-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f9f9f9;
+}
+
+.upload-form h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.upload-form input,
+.upload-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.upload-form textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.upload-form button {
+  width: 100%;
+  padding: 12px;
+  background: #007cba;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.upload-form button:hover {
+  background: #005a8b;
+}
+
+.upload-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+</style>
 
         <!-- Stats Tab -->
         <div id="stats" class="tab-content active">
@@ -540,6 +648,8 @@
             </div>
         </div>
     </div>
+
+    
      
     <!-- Floating Glow Sticks -->
     <div class="glow-sticks">

@@ -1,0 +1,34 @@
+[build]
+  functions = "netlify/functions"
+
+[functions]
+  # Set timeout for functions (max 10 seconds for free tier)
+  timeout = 10
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+# Redirect API calls to functions
+[[redirects]]
+  from = "/api/submit-photo"
+  to = "/.netlify/functions/submit-photo"
+  status = 200
+
+[[redirects]]
+  from = "/api/submit-video"
+  to = "/.netlify/functions/submit-video"
+  status = 200
+
+[[redirects]]
+  from = "/api/submit-message"
+  to = "/.netlify/functions/submit-message"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-submissions"
+  to = "/.netlify/functions/get-submissions"
+  status = 200
