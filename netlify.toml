@@ -1,10 +1,6 @@
 [build]
   functions = "netlify/functions"
 
-[functions]
-  # Set timeout for functions (max 10 seconds for free tier)
-  timeout = 10
-
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
@@ -12,7 +8,6 @@
     Access-Control-Allow-Headers = "Content-Type"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
 
-# Redirect API calls to functions
 [[redirects]]
   from = "/api/submit-photo"
   to = "/.netlify/functions/submit-photo"
