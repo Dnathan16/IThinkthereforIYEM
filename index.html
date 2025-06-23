@@ -111,6 +111,58 @@
   <!-- Messages will be loaded here -->
 </div>
 
+<style>
+.upload-form {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: #f9f9f9;
+}
+
+.upload-form h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.upload-form input,
+.upload-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.upload-form textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.upload-form button {
+  width: 100%;
+  padding: 12px;
+  background: #007cba;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.upload-form button:hover {
+  background: #005a8b;
+}
+
+.upload-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+</style>
 
         <!-- Stats Tab -->
         <div id="stats" class="tab-content active">
@@ -625,5 +677,146 @@
         <div class="glow-stick" onclick="throwGlowStick(this)"></div>
     </div>
     <script src="app.js" defer></script>
+    <script>
+// Complete Photo Upload Handler
+async function handlePhotoUpload(event) {
+  event.preventDefault();
+  console.log('Photo upload started');
+  
+  const fileInput = document.getElementById('photo-input');
+  const nameInput = document.getElementById('photo-name');
+  const emailInput = document.getElementById('photo-email');
+  const showDateInput = document.getElementById('photo-show-date');
+  const venueInput = document.getElementById('photo-venue');
+  const descriptionInput = document.getElementById('photo-description');
+  
+  if (!fileInput.files[0]) {
+    alert('Please select a photo');
+    return;
+  }
+  
+  // Show loading state
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'Uploading...';
+  submitBtn.disabled = true;
+  
+  try {
+    console.log('Converting file to base64...');
+    // Convert file to base64
+    const file = fileInput.files[0];
+    const base64 = await fileToBase64(file);
+    console.log('File converted, size:', base64.length);
+    
+    const uploadData = {
+      name: nameInput.value,
+      email: emailInput.value,
+      showDate: showDateInput.value,
+      venue: venueInput.value,
+      description: descriptionInput.value,
+      photoBase64: base64,
+    };
+    
+    console.log('Sending to API...');
+    
+    // Submit to backend
+    const response = await fetch('/api/submit-photo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(uploadData),
+    });
+    
+    console.log('Response status:', response.status);
+    const result = await response.json();
+    console.log('Response data:', result);
+    
+    if (result.success) {
+      alert('Photo uploaded successfully!');
+      event.target.reset();
+      loadPhotos();
+    } else {
+      alert('Error uploading photo: ' + result.error);
+      console.error('Upload error:', result);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    alert('Error uploading photo: ' + error.message);
+  } finally {
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
+}
+
+// Convert file to base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+// Load and display photos
+async function loadPhotos() {
+  try {
+    console.log('Loading photos...');
+    const response = await fetch('/api/get-submissions?type=photos');
+    const result = await response.json();
+    console.log('Photos loaded:', result);
+    
+    if (result.success) {
+      const photosContainer = document.getElementById('photos-container');
+      if (!photosContainer) {
+        console.log('No photos container found');
+        return;
+      }
+      
+      photosContainer.innerHTML = '';
+      
+      if (result.submissions.length === 0) {
+        photosContainer.innerHTML = '<p>No photos submitted yet. Be the first!</p>';
+        return;
+      }
+      
+      result.submissions.forEach(photo => {
+        const photoDiv = document.createElement('div');
+        photoDiv.className = 'photo-item';
+        photoDiv.innerHTML = `
+          <img src="${photo['Photo URL']}" alt="${photo.Description || 'Concert photo'}" loading="lazy">
+          <div class="photo-info">
+            <h4>${photo.Venue || 'Unknown Venue'}</h4>
+            <p>${photo['Show Date'] || 'Date unknown'}</p>
+            <p>${photo.Description || ''}</p>
+            <small>Submitted by ${photo.Name}</small>
+          </div>
+        `;
+        photosContainer.appendChild(photoDiv);
+      });
+    }
+  } catch (error) {
+    console.error('Error loading photos:', error);
+  }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Initializing photo upload...');
+  
+  loadPhotos();
+  
+  const photoForm = document.getElementById('photo-form');
+  if (photoForm) {
+    console.log('Photo form found, adding event listener');
+    photoForm.addEventListener('submit', handlePhotoUpload);
+  } else {
+    console.log('Photo form not found');
+  }
+});
+</script>
+</body>
+</html>
 </body>
 </html>
