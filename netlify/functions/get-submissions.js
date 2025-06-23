@@ -26,21 +26,31 @@ exports.handler = async (event, context) => {
         tableName = 'Photos';
     }
 
+    // Debug logging
+    console.log('Base ID:', process.env.AIRTABLE_BASE_ID);
+    console.log('Token exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
+    console.log('Table name:', tableName);
+
     // Fetch from Airtable
-    const airtableResponse = await fetch(
-      `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}?sort[0][field]=Submitted At&sort[0][direction]=desc&maxRecords=50`,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
-        },
-      }
-    );
+    const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}?sort[0][field]=Submitted At&sort[0][direction]=desc&maxRecords=50`;
+    console.log('Airtable URL:', airtableUrl);
+
+    const airtableResponse = await fetch(airtableUrl, {
+      headers: {
+        'Authorization': `Bearer ${process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
+      },
+    });
+
+    console.log('Airtable response status:', airtableResponse.status);
 
     if (!airtableResponse.ok) {
-      throw new Error('Failed to fetch from Airtable');
+      const errorText = await airtableResponse.text();
+      console.error('Airtable error:', errorText);
+      throw new Error(`Failed to fetch from Airtable: ${airtableResponse.status} - ${errorText}`);
     }
 
     const data = await airtableResponse.json();
+    console.log('Airtable data:', data);
     
     // Format the response
     const submissions = data.records.map(record => ({
@@ -60,7 +70,7 @@ exports.handler = async (event, context) => {
       }),
     };
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Function error:', error);
     return {
       statusCode: 500,
       headers: {
@@ -68,7 +78,7 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         success: false,
-        error: 'Failed to fetch submissions',
+        error: error.message,
       }),
     };
   }
