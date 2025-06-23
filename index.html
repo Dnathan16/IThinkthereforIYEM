@@ -68,43 +68,7 @@
     
     <button type="submit">Upload Photo</button>
   </form>
-</div>
-
-<!-- Add the JavaScript too -->
-<script>
-// Test if JavaScript is loading
-console.log('JavaScript is loading!');
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM loaded');
-  
-  const photoForm = document.getElementById('photo-form');
-  console.log('Photo form found:', photoForm);
-  
-  if (photoForm) {
-    photoForm.addEventListener('submit', function(event) {
-      event.preventDefault();
-      console.log('Form submitted!');
-      alert('Form submission triggered - check console for details');
-      
-      // Test file input
-      const fileInput = document.getElementById('photo-input');
-      console.log('File input:', fileInput);
-      console.log('Selected files:', fileInput.files);
-      
-      if (fileInput.files[0]) {
-        console.log('File selected:', fileInput.files[0].name);
-      } else {
-        console.log('No file selected');
-      }
-    });
-  } else {
-    console.log('ERROR: Photo form not found!');
-  }
-});
-</script>
-
-
+</div>s
 
 
 
