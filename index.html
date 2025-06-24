@@ -29,8 +29,7 @@
         <div class="nav-container">
             <div class="nav-tabs">
                 <div class="tab active" onclick="showTab('stats')">Statistics</div>
-                <div class="tab" onclick="showTab('messages')">Messages</div>
-                <div class="tab" onclick="showTab('photos')">Photos</div>
+                <div class="tab" onclick="showTab('photos')">Photos and Messages</div>
                 <div class="tab" onclick="showTab('predictions')">Predictions</div>
             </div>
         </div>
@@ -421,37 +420,7 @@
             </div>
         </div>
 
-        <!-- Messages Tab -->
-        <div id="messages" class="tab-content">
-            <h2 class="section-title">Sign the Yearbook</h2>
-
-            <div class="form-section">
-                <form id="messageForm">
-                    <div class="form-group">
-                        <label class="form-label" for="authorName">Your Name</label>
-                        <input type="text" id="authorName" class="form-input" placeholder="Enter your name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="messageContent">Your Message</label>
-                        <textarea id="messageContent" class="form-textarea" placeholder="Share your thoughts, memories, or congratulations for Jordan's 200th show..." required rows="5"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Add Message</button>
-                </form>
-            </div>
-
-            <div class="message-grid" id="messageWall">
-                <div class="message-card">
-                    <div class="message-header">
-                        <div class="message-author">Concert Buddy</div>
-                        <div class="message-date">Today</div>
-                    </div>
-                    <div class="message-content">
-                        Jordan! 199 shows and counting - what an incredible journey! From those early 2000s shows to today's epic performances, you've witnessed some truly magical moments. Can't wait to celebrate #200 at Forest Hills with you!
-                    </div>
-                </div>
-            </div>
-        </div>
-
+       
         <!-- Photos Tab -->
         <div id="photos" class="tab-content">
             <h2 class="section-title">Concert Photo Gallery</h2>
