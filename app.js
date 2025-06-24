@@ -339,35 +339,6 @@ function saveSetlist() {
     showNotification('Setlist prediction saved!');
 }
 
-// Photo upload handler
-function handlePhotoUpload(event) {
-    const files = event.target.files;
-    const gallery = document.getElementById('photos-gallery');
-
-    if (files.length > 0) {
-        if (gallery.innerHTML.includes('Uploaded photos will appear here')) {
-            gallery.innerHTML = '<h3 style="color: #00ff88; margin-bottom: 20px;">📷 Photo Gallery</h3>';
-        }
-
-        Array.from(files).forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const photoHTML = `
-                        <div style="display: inline-block; margin: 10px; text-align: center;">
-                            <img src="${e.target.result}" style="max-width: 200px; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                            <p style="margin: 5px 0; font-size: 0.9em; color: #666;">${file.name}</p>
-                        </div>
-                    `;
-                    gallery.innerHTML += photoHTML;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        showNotification(`${files.length} photo(s) uploaded! 📸`);
-    }
-}
 
 // Video upload handler
 function handleVideoUpload(event) {
