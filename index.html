@@ -479,58 +479,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Videos Tab -->
-        <div id="videos" class="tab-content">
-            <h2 class="section-title">Video Collection</h2>
-            <div class="form-section">
-                <p style="text-align: center; color: rgba(255, 255, 255, 0.8); margin-bottom: 40px; font-size: 1.1rem;">Share concert videos and messages!</p>
-                <div style="border: 3px dashed #ff0088; border-radius: 15px; padding: 40px; text-align: center; background: rgba(255, 0, 136, 0.1); cursor: pointer; transition: all 0.3s ease;" onclick="document.getElementById('video-upload').click()">
-                    <input type="file" id="video-upload" multiple accept="video/*" style="display: none;" onchange="handleVideoUpload(event)">
-                    <h3 style="color: #ff0088; margin-bottom: 10px;">🎥 Upload Your Phish Videos!</h3>
-                    <p style="color: rgba(255, 255, 255, 0.8);">Share videos from shows, jams, or Phish moments</p>
-                </div>
-                <div id="videos-gallery" style="margin-top: 30px;">
-                    <p style="color: #666; font-style: italic; text-align: center;">Uploaded videos will appear here...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Memories Tab -->
-        <div id="memories" class="tab-content">
-            <h2 class="section-title">Shared Memories</h2>
-
-            <div class="form-section">
-                <form id="memoryForm">
-                    <div class="form-group">
-                        <label class="form-label" for="memoryAuthor">Your Name</label>
-                        <input type="text" id="memoryAuthor" class="form-input" placeholder="Your name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="memoryShow">Show/Date (optional)</label>
-                        <input type="text" id="memoryShow" class="form-input" placeholder="e.g., 'Baker's Dozen Night 3' or 'NYE 2019'...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="memoryContent">Your Memory</label>
-                        <textarea id="memoryContent" class="form-textarea" placeholder="Share your favorite Phish memory with Jordan..." required rows="6"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Share Memory</button>
-                </form>
-            </div>
-
-            <div class="message-grid" id="memoryWall">
-                <div class="message-card">
-                    <div class="message-header">
-                        <div class="message-author">Phan Friend</div>
-                        <div class="message-date">Classic Memory</div>
-                    </div>
-                    <div class="message-content">
-                        That incredible Harry Hood at Madison Square Garden... the whole crowd singing along, the lights painting everything in blues and purples, the energy building to that perfect peak. That's what Phish is all about!
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        
         <!-- Predictions Tab -->
         <div id="predictions" class="tab-content">
             <h2 class="section-title">Show #200 Predictions</h2>
