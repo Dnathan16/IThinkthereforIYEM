@@ -40,16 +40,16 @@ exports.handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body);
-    const { name, description, photoBase64 } = data;
+    const { name, email, showDate, venue, description, photoBase64 } = data;
 
     // Validate required fields
-    if (!name || !photoBase64) {
+    if (!name || !email || !photoBase64) {
       return {
         statusCode: 400,
         headers,
         body: JSON.stringify({ 
           success: false, 
-          error: 'Missing required fields: name and photo are required' 
+          error: 'Missing required fields: name, email, and photo are required' 
         })
       };
     }
@@ -73,7 +73,10 @@ exports.handler = async (event, context) => {
     const airtableData = {
       fields: {
         Name: name,
+        Email: email,
         'Photo URL': uploadResult.secure_url,
+        'Show Date': showDate || '',
+        Venue: venue || '',
         Description: description || ''
       }
     };
