@@ -183,29 +183,19 @@
                             3 Days of Phish Magic! 🎪
                         </div>
                     </div>
-                    <div class="milestone-show" style="background: linear-gradient(135deg, rgba(255, 0, 136, 0.3), rgba(0, 255, 136, 0.3)); border-color: #ff0088;">
-                        <div class="show-number" style="font-size: 3rem;">Coventry</div>                        <div class="show-venue">Coventry Airport</div>
+                    <div class="milestone-show" style="background: linear-gradient(135deg, rgba(100, 100, 100, 0.3), rgba(150, 150, 150, 0.3)); border-color: #888;">
+                        <div class="show-number" style="font-size: 2.5rem; background: linear-gradient(45deg, #888, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">COVENTRY</div>
+                        <div class="show-date" style="color: #ccc;">August 15, 2004</div>
+                        <div class="show-venue">Coventry Airport</div>
                         <div class="show-location">Coventry, VT</div>
                         <div style="margin-top: 10px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">
                             The "Final" Festival 😢
                         </div>
                     </div>
-            
-                    <div class="milestone-show" style="background: linear-gradient(135deg, rgba(255, 0, 136, 0.3), rgba(0, 255, 136, 0.3)); border-color: #ff0088;">
-                        <div class="show-number" style="font-size: 3rem;">Mondegreen</div>
-                        <div class="show-date" style="color: #ffb400;">August 15-18, 2024</div>
-                        <div class="show-venue">Dover Motor Speedway</div>
-                        <div class="show-location">Dover, DE</div>
-                        <div style="margin-top: 10px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8);">
-                            Way better than Curveball 🏎️
-                        </div>
-                    
                 </div>
             </div>
-                <h3 style="font-size: 2.5rem; margin-top: 3rem; margin-bottom: 32px; color: #00ff88;">Stats (We know you love them)</h3>
 
             <div class="stats-grid">
-               
                 <div class="stat-card">
                     <div class="stat-number">199</div>
                     <div class="stat-label">Total Shows Attended</div>
@@ -226,12 +216,12 @@
                     <div class="stat-number">30%</div>
                     <div class="stat-label">At MSG!</div>
                 </div>
-             
                 <div class="stat-card"  onclick="showNotification('Started following in 2000!')">
                     <div class="stat-number">2000</div>
                     <div class="stat-label">First Year</div>
                 </div>
-            
+            </div>
+
             </div>
 
             <!-- Phun Facts Section -->
@@ -587,23 +577,8 @@ async function loadPhotos() {
     console.error('Error loading photos:', error);
   }
 }
-
-// Toggle stats section
-document.addEventListener('DOMContentLoaded', function() {
-  const toggleBtn = document.getElementById('toggleStatsBtn');
-  const statsSection = document.getElementById('hiddenStatsSection');
-  if (toggleBtn && statsSection) {
-    toggleBtn.addEventListener('click', function() {
-      if (statsSection.style.display === 'none') {
-        statsSection.style.display = 'block';
-        toggleBtn.textContent = 'Hide stats';
-      } else {
-        statsSection.style.display = 'none';
-        toggleBtn.textContent = 'Click for more stats';
-      }
-    });
-  }
-});
 </script>
+</body>
+</html>
 </body>
 </html>
