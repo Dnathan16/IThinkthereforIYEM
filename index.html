@@ -285,7 +285,7 @@
                 </div>
             </div>
 
-
+            
             <div style="background: rgba(0, 0, 0, 0.4); border-radius: 16px; padding: 30px; margin: 40px 0; border: 2px solid rgba(0, 136, 255, 0.3);">
                 <h3 style="text-align: center; color: #0088ff; font-size: 1.8rem; margin-bottom: 20px;">Venues Conquered</h3>
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -431,7 +431,7 @@
                 </div>
             </div>
 
-
+                       
 <div class="container">
         <h1>🎡 Lot Spinning Wheel 🎡</h1>
         <p>Can't decide what to grab in the lot? Spin to find out!</p>
@@ -444,7 +444,7 @@
         <button class="spin-button" id="spinButton" onclick="spinWheel()">Spin the Wheel!</button>
         <div class="result" id="result"></div>
     </div>
-
+           
     <!-- Floating Glow Sticks -->
     <div class="glow-sticks">
         <div class="glow-stick" onclick="throwGlowStick(this)"></div>
@@ -535,145 +535,77 @@ document.addEventListener('DOMContentLoaded', function() {
   loadPhotos();
 });
 
-// Global variables for infinite scroll
-let allPhotos = [];
-let displayedPhotos = 0;
-const photosPerBatch = 36; // Load 69 photos at a time
-let isLoading = false;
-let photoGrid = null;
-
-// Load and display photos with infinite scroll
+// Load and display photos - FETCH ALL 154 PHOTOS FROM CLOUDINARY
 async function loadPhotos() {
   try {
-    const response = await fetch('/api/get-submissions?type=photos');
+    console.log('Fetching ALL photos directly from Cloudinary...');
+    
+    // Fetch ALL photos directly from Cloudinary (bypassing Airtable)
+    const response = await fetch('/api/get-cloudinary-photos');
     const result = await response.json();
 
     if (result.success) {
-      allPhotos = result.submissions;
-      displayedPhotos = 0;
-
       const photosContainer = document.getElementById('photos-container');
       if (!photosContainer) return;
 
       photosContainer.innerHTML = '';
 
-      if (allPhotos.length === 0) {
-        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos submitted yet. Be the first!</p>';
+      if (result.submissions.length === 0) {
+        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos found in Cloudinary!</p>';
         return;
       }
 
-      // Add photo count info
+      // Show total count - should be 154!
       const countInfo = document.createElement('div');
-      countInfo.style.cssText = 'text-align: center; margin-bottom: 20px; color: rgba(255, 255, 255, 0.7);';
-      countInfo.innerHTML = `<p>📸 ${allPhotos.length} photos in the gallery</p>`;
+      countInfo.style.cssText = 'text-align: center; margin-bottom: 20px; color: rgba(255, 255, 255, 0.8); font-size: 1.2rem;';
+      countInfo.innerHTML = `<p>📸 ${result.submissions.length} photos loaded directly from Cloudinary!</p>`;
       photosContainer.appendChild(countInfo);
 
       // Create photo grid
-      photoGrid = document.createElement('div');
+      const photoGrid = document.createElement('div');
       photoGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;';
-      photoGrid.id = 'photo-grid';
+
+      result.submissions.forEach((photo, index) => {
+        const photoCard = document.createElement('div');
+        photoCard.style.cssText = `
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          overflow: hidden;
+          transition: transform 0.3s ease;
+          cursor: pointer;
+        `;
+        photoCard.onmouseover = () => photoCard.style.transform = 'scale(1.02)';
+        photoCard.onmouseout = () => photoCard.style.transform = 'scale(1)';
+
+        photoCard.innerHTML = `
+          <img src="${photo['Photo URL']}" alt="${photo.Description || 'Concert photo'}"
+               style="width: 100%; height: 200px; object-fit: cover;"
+               loading="lazy">
+          <div style="padding: 15px;">
+            <p style="margin: 0 0 10px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">${photo.Description || `Photo ${index + 1}`}</p>
+            <small style="color: rgba(255, 255, 255, 0.5);">From Cloudinary</small>
+          </div>
+        `;
+
+        photoGrid.appendChild(photoCard);
+      });
+
       photosContainer.appendChild(photoGrid);
-
-      // Create loading indicator
-      const loadingIndicator = document.createElement('div');
-      loadingIndicator.id = 'loading-indicator';
-      loadingIndicator.style.cssText = 'text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.6); display: none;';
-      loadingIndicator.innerHTML = '<p>Loading more photos...</p>';
-      photosContainer.appendChild(loadingIndicator);
-
-      // Load initial batch
-      loadMorePhotos();
-
-      // Set up infinite scroll
-      setupInfiniteScroll();
+      
+      console.log(`Successfully loaded ${result.submissions.length} photos from Cloudinary!`);
+    } else {
+      console.error('Failed to fetch from Cloudinary:', result.error);
+      const photosContainer = document.getElementById('photos-container');
+      if (photosContainer) {
+        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Error loading photos from Cloudinary. Check console for details.</p>';
+      }
     }
   } catch (error) {
     console.error('Error loading photos:', error);
-  }
-}
-
-// Load more photos in batches
-function loadMorePhotos() {
-  if (isLoading || displayedPhotos >= allPhotos.length) return;
-
-  isLoading = true;
-  const loadingIndicator = document.getElementById('loading-indicator');
-  if (loadingIndicator) loadingIndicator.style.display = 'block';
-
-  // Simulate a small delay for better UX
-  setTimeout(() => {
-    const endIndex = Math.min(displayedPhotos + photosPerBatch, allPhotos.length);
-    const batch = allPhotos.slice(displayedPhotos, endIndex);
-
-    batch.forEach(photo => {
-      const photoCard = createPhotoCard(photo);
-      photoGrid.appendChild(photoCard);
-    });
-
-    displayedPhotos = endIndex;
-    isLoading = false;
-
-    if (loadingIndicator) {
-      if (displayedPhotos >= allPhotos.length) {
-        loadingIndicator.innerHTML = `<p>✨ All ${allPhotos.length} photos loaded!</p>`;
-        setTimeout(() => loadingIndicator.style.display = 'none', 2000);
-      } else {
-        loadingIndicator.style.display = 'none';
-      }
+    const photosContainer = document.getElementById('photos-container');
+    if (photosContainer) {
+      photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Network error loading photos. Check console for details.</p>';
     }
-  }, 300);
-}
-
-// Create individual photo card
-function createPhotoCard(photo) {
-  const photoCard = document.createElement('div');
-  photoCard.style.cssText = `
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.3s ease, opacity 0.5s ease;
-    cursor: pointer;
-    opacity: 0;
-    animation: fadeInUp 0.6s ease forwards;
-  `;
-
-  photoCard.onmouseover = () => photoCard.style.transform = 'scale(1.02)';
-  photoCard.onmouseout = () => photoCard.style.transform = 'scale(1)';
-
-  photoCard.innerHTML = `
-    <img src="${photo['Photo URL']}" alt="${photo.Description || 'Concert photo'}"
-         style="width: 100%; height: 200px; object-fit: cover;"
-         loading="lazy">
-    <div style="padding: 15px;">
-      <p style="margin: 0 0 10px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">${photo.Description || ''}</p>
-      <small style="color: rgba(255, 255, 255, 0.5);">By ${photo.Name}</small>
-    </div>
-  `;
-
-  return photoCard;
-}
-
-// Set up infinite scroll functionality
-function setupInfiniteScroll() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && displayedPhotos < allPhotos.length && !isLoading) {
-        loadMorePhotos();
-      }
-    });
-  }, {
-    rootMargin: '100px' // Load more when user is 100px from bottom
-  });
-
-  // Create a sentinel element to observe
-  const sentinel = document.createElement('div');
-  sentinel.id = 'scroll-sentinel';
-  sentinel.style.cssText = 'height: 1px; position: absolute; bottom: 200px; width: 100%;';
-
-  const photosContainer = document.getElementById('photos-container');
-  if (photosContainer) {
-    photosContainer.appendChild(sentinel);
-    observer.observe(sentinel);
   }
 }
 </script>
