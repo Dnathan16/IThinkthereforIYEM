@@ -285,7 +285,7 @@
                 </div>
             </div>
 
-            
+
             <div style="background: rgba(0, 0, 0, 0.4); border-radius: 16px; padding: 30px; margin: 40px 0; border: 2px solid rgba(0, 136, 255, 0.3);">
                 <h3 style="text-align: center; color: #0088ff; font-size: 1.8rem; margin-bottom: 20px;">Venues Conquered</h3>
                 <div style="text-align: center; margin-bottom: 30px;">
@@ -431,7 +431,7 @@
                 </div>
             </div>
 
-                       
+
 <div class="container">
         <h1>🎡 Lot Spinning Wheel 🎡</h1>
         <p>Can't decide what to grab in the lot? Spin to find out!</p>
@@ -444,7 +444,7 @@
         <button class="spin-button" id="spinButton" onclick="spinWheel()">Spin the Wheel!</button>
         <div class="result" id="result"></div>
     </div>
-           
+
     <!-- Floating Glow Sticks -->
     <div class="glow-sticks">
         <div class="glow-stick" onclick="throwGlowStick(this)"></div>
@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global variables for infinite scroll
 let allPhotos = [];
 let displayedPhotos = 0;
-const photosPerBatch = 12; // Load 12 photos at a time
+const photosPerBatch = 36; // Load 69 photos at a time
 let isLoading = false;
 let photoGrid = null;
 
@@ -551,7 +551,7 @@ async function loadPhotos() {
     if (result.success) {
       allPhotos = result.submissions;
       displayedPhotos = 0;
-      
+
       const photosContainer = document.getElementById('photos-container');
       if (!photosContainer) return;
 
@@ -595,24 +595,24 @@ async function loadPhotos() {
 // Load more photos in batches
 function loadMorePhotos() {
   if (isLoading || displayedPhotos >= allPhotos.length) return;
-  
+
   isLoading = true;
   const loadingIndicator = document.getElementById('loading-indicator');
   if (loadingIndicator) loadingIndicator.style.display = 'block';
-  
+
   // Simulate a small delay for better UX
   setTimeout(() => {
     const endIndex = Math.min(displayedPhotos + photosPerBatch, allPhotos.length);
     const batch = allPhotos.slice(displayedPhotos, endIndex);
-    
+
     batch.forEach(photo => {
       const photoCard = createPhotoCard(photo);
       photoGrid.appendChild(photoCard);
     });
-    
+
     displayedPhotos = endIndex;
     isLoading = false;
-    
+
     if (loadingIndicator) {
       if (displayedPhotos >= allPhotos.length) {
         loadingIndicator.innerHTML = `<p>✨ All ${allPhotos.length} photos loaded!</p>`;
@@ -636,7 +636,7 @@ function createPhotoCard(photo) {
     opacity: 0;
     animation: fadeInUp 0.6s ease forwards;
   `;
-  
+
   photoCard.onmouseover = () => photoCard.style.transform = 'scale(1.02)';
   photoCard.onmouseout = () => photoCard.style.transform = 'scale(1)';
 
@@ -664,12 +664,12 @@ function setupInfiniteScroll() {
   }, {
     rootMargin: '100px' // Load more when user is 100px from bottom
   });
-  
+
   // Create a sentinel element to observe
   const sentinel = document.createElement('div');
   sentinel.id = 'scroll-sentinel';
   sentinel.style.cssText = 'height: 1px; position: absolute; bottom: 200px; width: 100%;';
-  
+
   const photosContainer = document.getElementById('photos-container');
   if (photosContainer) {
     photosContainer.appendChild(sentinel);
