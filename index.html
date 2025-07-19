@@ -535,13 +535,10 @@ document.addEventListener('DOMContentLoaded', function() {
   loadPhotos();
 });
 
-// Load and display photos - FETCH ALL PHOTOS FROM CLOUDINARY!
+// Load and display photos
 async function loadPhotos() {
   try {
-    console.log('Fetching ALL photos directly from Cloudinary for your friend!');
-    
-    // Use new dedicated Cloudinary endpoint to get ALL 150+ photos
-    const response = await fetch('/api/get-all-cloudinary');
+    const response = await fetch('/api/get-submissions?type=photos');
     const result = await response.json();
 
     if (result.success) {
@@ -551,21 +548,15 @@ async function loadPhotos() {
       photosContainer.innerHTML = '';
 
       if (result.submissions.length === 0) {
-        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos found in Cloudinary!</p>';
+        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos submitted yet. Be the first!</p>';
         return;
       }
-
-      // Show total count - should be ALL 150+ photos!
-      const countInfo = document.createElement('div');
-      countInfo.style.cssText = 'text-align: center; margin-bottom: 20px; color: rgba(255, 255, 255, 0.8); font-size: 1.2rem;';
-      countInfo.innerHTML = `<p>📸 ${result.submissions.length} photos loaded from Cloudinary!</p>`;
-      photosContainer.appendChild(countInfo);
 
       // Create photo grid
       const photoGrid = document.createElement('div');
       photoGrid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;';
 
-      result.submissions.forEach((photo, index) => {
+      result.submissions.forEach(photo => {
         const photoCard = document.createElement('div');
         photoCard.style.cssText = `
           background: rgba(0, 0, 0, 0.3);
@@ -579,8 +570,7 @@ async function loadPhotos() {
 
         photoCard.innerHTML = `
           <img src="${photo['Photo URL']}" alt="${photo.Description || 'Concert photo'}"
-               style="width: 100%; height: 200px; object-fit: cover;"
-               loading="lazy">
+               style="width: 100%; height: 200px; object-fit: cover;">
           <div style="padding: 15px;">
             <p style="margin: 0 0 10px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">${photo.Description || ''}</p>
             <small style="color: rgba(255, 255, 255, 0.5);">By ${photo.Name}</small>
@@ -591,21 +581,9 @@ async function loadPhotos() {
       });
 
       photosContainer.appendChild(photoGrid);
-      
-      console.log(`Successfully loaded ${result.submissions.length} photos from Cloudinary!`);
-    } else {
-      console.error('Failed to fetch from Cloudinary:', result.error);
-      const photosContainer = document.getElementById('photos-container');
-      if (photosContainer) {
-        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Error loading photos from Cloudinary. Check console for details.</p>';
-      }
     }
   } catch (error) {
     console.error('Error loading photos:', error);
-    const photosContainer = document.getElementById('photos-container');
-    if (photosContainer) {
-      photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Network error loading photos from Cloudinary. Check console for details.</p>';
-    }
   }
 }
 </script>
