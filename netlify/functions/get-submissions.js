@@ -31,29 +31,48 @@ exports.handler = async (event, context) => {
     console.log('Token exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
     console.log('Table name:', tableName);
 
-    // Fetch from Airtable
-    const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}?sort[0][field]=Submitted At&sort[0][direction]=desc&maxRecords=50`;
-    console.log('Airtable URL:', airtableUrl);
+    // Fetch all records from Airtable using pagination
+    let allRecords = [];
+    let offset = null;
 
-    const airtableResponse = await fetch(airtableUrl, {
-      headers: {
-        'Authorization': `Bearer ${process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
-      },
-    });
+    do {
+      // Build URL with pagination
+      let airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}?sort[0][field]=Submitted At&sort[0][direction]=desc&maxRecords=300`;
+      if (offset) {
+        airtableUrl += `&offset=${offset}`;
+      }
 
-    console.log('Airtable response status:', airtableResponse.status);
+      console.log('Airtable URL:', airtableUrl);
 
-    if (!airtableResponse.ok) {
-      const errorText = await airtableResponse.text();
-      console.error('Airtable error:', errorText);
-      throw new Error(`Failed to fetch from Airtable: ${airtableResponse.status} - ${errorText}`);
-    }
+      const airtableResponse = await fetch(airtableUrl, {
+        headers: {
+          'Authorization': `Bearer ${process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN}`,
+        },
+      });
 
-    const data = await airtableResponse.json();
-    console.log('Airtable data:', data);
-    
+      console.log('Airtable response status:', airtableResponse.status);
+
+      if (!airtableResponse.ok) {
+        const errorText = await airtableResponse.text();
+        console.error('Airtable error:', errorText);
+        throw new Error(`Failed to fetch from Airtable: ${airtableResponse.status} - ${errorText}`);
+      }
+
+      const data = await airtableResponse.json();
+      console.log(`Fetched ${data.records.length} records. Offset: ${data.offset || 'none'}`);
+
+      // Add records to our collection
+      allRecords = allRecords.concat(data.records);
+
+      // Set offset for next page, or null if no more pages
+      offset = data.offset || null;
+
+    } while (offset); // Continue until no more pages
+
+    console.log(`Total records fetched: ${allRecords.length}`);
+
     // Format the response
-    const submissions = data.records.map(record => ({
+    const submissions = allRecords.map(record => ({
       id: record.id,
       ...record.fields,
     }));
