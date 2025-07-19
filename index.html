@@ -535,13 +535,13 @@ document.addEventListener('DOMContentLoaded', function() {
   loadPhotos();
 });
 
-// Load and display photos - FETCH ALL 154 PHOTOS FROM CLOUDINARY
+// Load and display photos - FETCH ALL PHOTOS FROM AIRTABLE (with pagination fix)
 async function loadPhotos() {
   try {
-    console.log('Fetching ALL photos directly from Cloudinary...');
+    console.log('Fetching ALL photos from Airtable (with pagination fix)...');
     
-    // Fetch ALL photos directly from Cloudinary (bypassing Airtable)
-    const response = await fetch('/api/get-cloudinary-photos');
+    // Use existing stable endpoint that now fetches all records
+    const response = await fetch('/api/get-submissions?type=photos');
     const result = await response.json();
 
     if (result.success) {
@@ -551,14 +551,14 @@ async function loadPhotos() {
       photosContainer.innerHTML = '';
 
       if (result.submissions.length === 0) {
-        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos found in Cloudinary!</p>';
+        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 255, 255, 0.6);">No photos submitted yet. Be the first!</p>';
         return;
       }
 
-      // Show total count - should be 154!
+      // Show total count - should be all photos now!
       const countInfo = document.createElement('div');
       countInfo.style.cssText = 'text-align: center; margin-bottom: 20px; color: rgba(255, 255, 255, 0.8); font-size: 1.2rem;';
-      countInfo.innerHTML = `<p>📸 ${result.submissions.length} photos loaded directly from Cloudinary!</p>`;
+      countInfo.innerHTML = `<p>📸 ${result.submissions.length} photos in gallery (with pagination fix)</p>`;
       photosContainer.appendChild(countInfo);
 
       // Create photo grid
@@ -582,8 +582,8 @@ async function loadPhotos() {
                style="width: 100%; height: 200px; object-fit: cover;"
                loading="lazy">
           <div style="padding: 15px;">
-            <p style="margin: 0 0 10px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">${photo.Description || `Photo ${index + 1}`}</p>
-            <small style="color: rgba(255, 255, 255, 0.5);">From Cloudinary</small>
+            <p style="margin: 0 0 10px 0; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem;">${photo.Description || ''}</p>
+            <small style="color: rgba(255, 255, 255, 0.5);">By ${photo.Name}</small>
           </div>
         `;
 
@@ -592,12 +592,12 @@ async function loadPhotos() {
 
       photosContainer.appendChild(photoGrid);
       
-      console.log(`Successfully loaded ${result.submissions.length} photos from Cloudinary!`);
+      console.log(`Successfully loaded ${result.submissions.length} photos from Airtable!`);
     } else {
-      console.error('Failed to fetch from Cloudinary:', result.error);
+      console.error('Failed to fetch from Airtable:', result.error);
       const photosContainer = document.getElementById('photos-container');
       if (photosContainer) {
-        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Error loading photos from Cloudinary. Check console for details.</p>';
+        photosContainer.innerHTML = '<p style="text-align: center; color: rgba(255, 100, 100, 0.8);">Error loading photos from Airtable. Check console for details.</p>';
       }
     }
   } catch (error) {
